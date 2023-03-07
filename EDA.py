@@ -7,7 +7,9 @@ def report_basic_info(df: pd.DataFrame):
     """ Prints the information of the columns in the dataframe, then prints the statistical variation of the
     columns. """
     print(df.info())
-    print(df.describe())
+    for col in df.columns:
+        print("-------")
+        print(df[col].describe())
 
 
 def report_duplicated(df: pd.DataFrame):
