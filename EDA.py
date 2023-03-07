@@ -1,10 +1,13 @@
 # Data manip/vis
+import time
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+
 # ML tasks
-from sklearn.ensemble import RandomForestClassifier
+from sklearnex import patch_sklearn
+from sklearn.ensemble import RandomForestRegressor
 
 
 def report_basic_info(df: pd.DataFrame):
@@ -69,6 +72,24 @@ def add_engineered_features(df: pd.DataFrame):
     return df
 
 
+def run_feature_selection(df: pd.DataFrame, method: str = 'RFC'):
+    """ Prints the importance of the features to the predicted value via the given method. """
+    X = df.drop(['id', 'Strength'], axis=1)
+    y = df['Strength']
+    start_time = time.perf_counter_ns()
+    rf = RandomForestRegressor()
+    rf.fit(X, y)
+    importances = rf.feature_importances_
+    end_time = time.perf_counter_ns()
+    sorted_idx = importances.argsort()
+    print(f"Feature Importance via {method} calculated in {(end_time - start_time)/1e9:.3f}s")
+    print(pd.Series(importances[sorted_idx], index=X.columns[sorted_idx]).sort_values(ascending=False)[:10])
+
+    corr_matrix = df.corr()
+    print("Correlation")
+    print(corr_matrix['Strength'].sort_values(ascending=False)[1:11])
+
+
 def main():
     """ Main function to run the various EDA tasks. """
     df = pd.read_csv("Kaggle Data/train.csv")
@@ -77,6 +98,14 @@ def main():
     plot_duplicated_distributions(df)
     # Feature engineering
     df = add_engineered_features(df)
+
+    # Setting up sklearn with GPU
+    patch_sklearn()
+
+    # Feature importance
+    run_feature_selection(df)
+    corr_matrix = df.corr()
+
 
 if __name__ == "__main__":
     main()
