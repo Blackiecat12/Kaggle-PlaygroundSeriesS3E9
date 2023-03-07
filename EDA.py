@@ -24,14 +24,26 @@ def report_duplicated(df: pd.DataFrame):
 
 
 def plot_duplicated_distributions(df: pd.DataFrame):
-    """ Plots the distributions of the duplicated values. """
-    df_duplicated_count = df.groupby(df.columns.tolist()[1:-1], as_index=False).size()
+    """ Plots the distribution of the times a row is duplicated. Then plots the distribution of the ranges that the
+    strength of that duplicated row has. """
+    feature_list = df.columns.tolist()[1:-1]
+    df_duplicated_count = df.groupby(feature_list, as_index=False).size()
     df_duplicated_count = df_duplicated_count[df_duplicated_count['size'] != 1]
     v_counts = df_duplicated_count['size'].value_counts()
     sns.barplot(x=v_counts.keys().to_list(), y=v_counts.values)
     plt.xlabel("Times repeated")
     plt.ylabel("Row Count")
     plt.title("Distribution of times a row is repeated")
+    plt.show()
+    # Grouping into the duplicates
+    groups = {}
+    ranges = []
+    for idx, group in df[df.duplicated(feature_list, keep=False)].groupby(feature_list):
+        groups[idx] = group
+        ranges.append(group['Strength'].max() - group['Strength'].min())
+    sns.violinplot(ranges)
+    plt.ylabel("Range of Strength in duplicated rows")
+    plt.title("Distribution of strength ranges between the duplicated rows")
     plt.show()
 
 
