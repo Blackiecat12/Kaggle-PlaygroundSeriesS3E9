@@ -1,6 +1,10 @@
+# Data manip/vis
+import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.pyplot as plt
+# ML tasks
+from sklearn.ensemble import RandomForestClassifier
 
 
 def report_basic_info(df: pd.DataFrame):
@@ -47,12 +51,32 @@ def plot_duplicated_distributions(df: pd.DataFrame):
     plt.show()
 
 
+def add_engineered_features(df: pd.DataFrame):
+    """ Adds various features to the input df. """
+    # TotalComponentWeight
+    df['TotalComponentWeight'] = df['CementComponent'] + df['BlastFurnaceSlag'] + df['FlyAshComponent'] \
+                                 + df['WaterComponent'] + df['SuperplasticizerComponent'] \
+                                 + df['CoarseAggregateComponent'] + df['FineAggregateComponent']
+    df['WaterCementRatio'] = df['WaterComponent'] / df['CementComponent']
+    df['AggregateRatio'] = (df['CoarseAggregateComponent'] + df['FineAggregateComponent']) / df['CementComponent']
+    df['WaterBindingRatio'] = df['WaterComponent'] / (df['CementComponent'] + df['BlastFurnaceSlag']
+                                                      + df['FlyAshComponent'])
+    df['SuperPlasticizerRatio'] = df['SuperplasticizerComponent'] / (df['CementComponent'] + df['BlastFurnaceSlag']
+                                                          + df['FlyAshComponent'])
+    df['CementAgeRelation'] = df['CementComponent'] * df['AgeInDays']
+    df['AgeFactor2'] = df['AgeInDays'] ^ 2
+    df['AgeFactor1/2'] = np.sqrt(df['AgeInDays'])
+    return df
+
+
 def main():
     """ Main function to run the various EDA tasks. """
     df = pd.read_csv("Kaggle Data/train.csv")
     report_basic_info(df)
     report_duplicated(df)
     plot_duplicated_distributions(df)
+    # Feature engineering
+    df = add_engineered_features(df)
 
 if __name__ == "__main__":
     main()
