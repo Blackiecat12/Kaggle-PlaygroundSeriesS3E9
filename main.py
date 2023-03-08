@@ -29,6 +29,32 @@ def remove_duplicate_instances(df: pd.DataFrame):
     return cleaned_df
 
 
+class CustomFeatures(BaseEstimator, TransformerMixin):
+    """ Transformation class to add the custom features for engineering. """
+    def __init__(self):
+        pass
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        X['TotalComponentWeight'] = X['CementComponent'] + X['BlastFurnaceSlag'] + X['FlyAshComponent'] \
+                                    + X['WaterComponent'] + X['SuperplasticizerComponent'] \
+                                    + X['CoarseAggregateComponent'] + X['FineAggregateComponent']
+        X['WaterCementRatio'] = X['WaterComponent'] / X['CementComponent']
+        X['AggregateRatio'] = (X['CoarseAggregateComponent'] + X['FineAggregateComponent']) / X[
+            'CementComponent']
+        X['WaterBindingRatio'] = X['WaterComponent'] / (X['CementComponent'] + X['BlastFurnaceSlag']
+                                                        + X['FlyAshComponent'])
+        X['SuperPlasticizerRatio'] = X['SuperplasticizerComponent'] / (
+                X['CementComponent'] + X['BlastFurnaceSlag']
+                + X['FlyAshComponent'])
+        X['CementAgeRelation'] = X['CementComponent'] * X['AgeInDays']
+        X['AgeFactor2'] = X['AgeInDays'] ^ 2
+        X['AgeFactor1/2'] = np.sqrt(X['AgeInDays'])
+        return X
+
+
 def main():
     # Enable GPU processing
     patch_sklearn()
