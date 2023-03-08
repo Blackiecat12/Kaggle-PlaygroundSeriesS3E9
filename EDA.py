@@ -1,4 +1,5 @@
 # Data manip/vis
+import math
 import time
 import numpy as np
 import pandas as pd
@@ -51,6 +52,32 @@ def plot_duplicated_distributions(df: pd.DataFrame):
     sns.violinplot(ranges)
     plt.ylabel("Range of Strength in duplicated rows")
     plt.title("Distribution of strength ranges between the duplicated rows")
+    plt.show()
+
+
+def analyse_feature_distributions(train: pd.DataFrame, test: pd.DataFrame, features: list[str]):
+    """ Plots the distribution of the feature values.
+    This code is inspired/used from https://www.kaggle.com/code/ambrosm/pss3e9-eda-which-makes-sense
+    :param train: The training dataframe
+    :param test: The test dataframe
+    :param features: The feature columns to plot
+    """
+    # Set up the plot
+    plot_width = 3
+    plot_height = math.ceil(len(features)/plot_width)
+    _, axs = plt.subplots(plot_width, plot_height, figsize=(12, 10))
+    ax_list = axs.ravel()
+
+    # Iterate the features and axes to create the full dist
+    for feature, ax in zip(features, ax_list):
+        if feature in test:
+            plot_data = pd.concat([train[feature], test[feature]], axis='columns')
+            plot_data.columns = ["Train", "Test"]
+        else:
+            plot_data = train[feature]
+            plot_data.columns = ["Train"]
+        plot_feature_distribution(plot_data, feature, ax)
+    plt.tight_layout(h_pad=0.5, w_pad=0.5)
     plt.show()
 
 
