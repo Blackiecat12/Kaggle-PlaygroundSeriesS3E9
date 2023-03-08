@@ -67,6 +67,14 @@ def create_preprocessing_pipeline():
     return preprocessing_pipeline
 
 
+def create_training_pipeline():
+    """ Creates the full pipeline with feature engineering, preprocessing, and model. """
+    clf = Pipeline(steps=[("feature_engineering", create_feature_engineering_pipeline()),
+                          ("preprocessing", create_preprocessing_pipeline()),
+                          ("model", Ridge(70))])
+    return clf
+
+
 def main():
     # Enable GPU processing
     patch_sklearn()
@@ -75,6 +83,15 @@ def main():
     full_data = pd.read_csv("Kaggle Data/train.csv")
     # full_data = remove_duplicate_instances(full_data)
     full_data.drop(columns=["id"], inplace=True)
+
+    # Training and test sets
+    train_X, test_X, train_y, test_y = train_test_split(full_data.iloc[:, :-1], full_data.iloc[:, -1], train_size=.7, random_state=300)
+
+    # Create the pipeline
+    model = create_training_pipeline()
+    tic = time.perf_counter_ns()
+    model.fit(train_X, train_y)
+    toc = time.perf_counter_ns()
 
 if __name__ == "__main__":
     main()
