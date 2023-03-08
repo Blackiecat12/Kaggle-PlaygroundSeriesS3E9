@@ -93,5 +93,9 @@ def main():
     model.fit(train_X, train_y)
     toc = time.perf_counter_ns()
 
+    predictions = model.predict(test_X)
+    print(f"Finished Training in {(toc-tic)/1e9:.2f}s with RMSE {sklearn.metrics.mean_squared_error(test_y, predictions, squared=False)}")
+    results = pd.DataFrame({"Prediction": predictions, "Actual": test_y, "Difference": predictions - test_y})
+
 if __name__ == "__main__":
     main()
