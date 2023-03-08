@@ -55,6 +55,12 @@ class CustomFeatures(BaseEstimator, TransformerMixin):
         return X
 
 
+def create_feature_engineering_pipeline():
+    """ Creates the pipeline to engineer features. """
+    engineering_pipeline = Pipeline(steps=[("custom_features", CustomFeatures())])
+    return engineering_pipeline
+
+
 def main():
     # Enable GPU processing
     patch_sklearn()
