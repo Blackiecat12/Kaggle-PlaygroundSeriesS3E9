@@ -61,6 +61,12 @@ def create_feature_engineering_pipeline():
     return engineering_pipeline
 
 
+def create_preprocessing_pipeline():
+    """ Creates the pipeline to run preprocessing on features. """
+    preprocessing_pipeline = Pipeline(steps=[("scaling", StandardScaler())])
+    return preprocessing_pipeline
+
+
 def main():
     # Enable GPU processing
     patch_sklearn()
