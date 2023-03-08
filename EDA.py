@@ -81,6 +81,20 @@ def analyse_feature_distributions(train: pd.DataFrame, test: pd.DataFrame, featu
     plt.show()
 
 
+def plot_feature_distribution(data: pd.DataFrame, feature: str, ax: plt.Axes):
+    """ Plots a single feature distribution with a histogram and returns the plot.
+    :param data: The dataframe to plot
+    :param feature: The feature name
+    :param ax: Where to plot
+    """
+    bin_number = 40
+    if len(np.unique(data)) < bin_number:
+        sns.histplot(data=data, stat='density', ax=ax, line_kws={'alpha': 0.5})
+    else:
+        sns.histplot(data=data, stat='density', ax=ax, line_kws={'alpha': 0.5})
+    ax.set_title(feature)
+
+
 def add_engineered_features(df: pd.DataFrame):
     """ Adds various features to the input df. """
     # TotalComponentWeight
@@ -97,7 +111,6 @@ def add_engineered_features(df: pd.DataFrame):
     df['AgeFactor2'] = df['AgeInDays'] ^ 2
     df['AgeFactor1/2'] = np.sqrt(df['AgeInDays'])
     return df
-
 
 def run_feature_selection(df: pd.DataFrame, method: str = 'RFC'):
     """ Prints the importance of the features to the predicted value via the given method. """
