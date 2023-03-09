@@ -95,6 +95,18 @@ def plot_feature_distribution(data: pd.DataFrame, feature: str, ax: plt.Axes):
     ax.set_title(feature)
 
 
+def analyse_correlations(data: pd.DataFrame):
+    """ Takes the correlation and plots as a heatmap.
+    This code is inspired/used from https://www.kaggle.com/code/ambrosm/pss3e9-eda-which-makes-sense
+    :param data: The data to correlate
+    """
+    corr_matrix = data.corr()
+    plt.figure(figsize=(6, 6))
+    sns.heatmap(corr_matrix, linewidth=0.1, fmt='.1f', annot=True, annot_kws={'size': 8}, cmap='PiYG', center=0)
+    plt.xticks(fontsize='x-small', rotation=40)
+    plt.show()
+
+
 def add_engineered_features(df: pd.DataFrame):
     """ Adds various features to the input df. """
     # TotalComponentWeight
@@ -145,6 +157,14 @@ def main():
     # Feature importance
     run_feature_selection(df)
     corr_matrix = df.corr()
+    train_df = pd.read_csv("Kaggle Data/train.csv")
+    test_df = pd.read_csv("Kaggle Data/test.csv")
+    # Info
+    # report_basic_info(df)
+    # report_duplicated(df)
+    # plot_duplicated_distributions(df)
+    # analyse_feature_distributions(df, pd.read_csv("Kaggle Data/test.csv"), df.columns[1:])
+    # analyse_correlations(df.iloc[:, 1:])
 
 
 if __name__ == "__main__":
