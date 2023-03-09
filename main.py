@@ -30,6 +30,23 @@ def remove_duplicate_instances(df: pd.DataFrame):
     return cleaned_df
 
 
+def plot_partial_dependence(model, full_data, features):
+    # Partial Dependence Display
+    tic = time.perf_counter_ns()
+    fig, axs = plt.subplots(2, 4, figsize=(12, 5))
+    plt.suptitle('Partial Dependence', y=1.0)
+    PartialDependenceDisplay.from_estimator(model, full_data.loc[:, features],
+                                            features,
+                                            pd_line_kw={"color": "red"},
+                                            ice_lines_kw={"color": "blue"},
+                                            kind='both',
+                                            ax=axs.ravel()[:len(features)])
+    plt.tight_layout(h_pad=0.3, w_pad=0.5)
+    toc = time.perf_counter_ns()
+    print(f"Partial Dependence Display done in {(toc - tic) / 1e9:.2f}s")
+    plt.show()
+
+
 class CustomFeatures(BaseEstimator, TransformerMixin):
     """ Transformation class to add the custom features for engineering. """
     def __init__(self):
