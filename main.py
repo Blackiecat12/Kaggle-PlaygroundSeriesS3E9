@@ -5,6 +5,7 @@ import pandas as pd
 import seaborn as sns
 import sklearn.metrics
 from matplotlib import pyplot as plt
+from sklearn.inspection import PartialDependenceDisplay
 from sklearn.metrics import mean_squared_error
 
 # ML packages
@@ -14,6 +15,7 @@ from sklearn.model_selection import train_test_split, KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.linear_model import Ridge
+from sklearn.ensemble import RandomForestRegressor
 
 
 def remove_duplicate_instances(df: pd.DataFrame):
@@ -136,11 +138,19 @@ def main():
 
     # Load and clean data
     full_data = pd.read_csv("Kaggle Data/train.csv")
-    # full_data = remove_duplicate_instances(full_data)
+    full_data = remove_duplicate_instances(full_data)
+    # TODO: data_cleaning function -> train + target columns
+    features = full_data.columns[1:-1]
+    target = full_data.columns[-1]
 
     # Create the pipeline
     model = create_training_pipeline(Ridge(70))
-    score_model_using_KFold(model, full_data, full_data.columns[1:-1], full_data.columns[-1], False)
+    score_model_using_KFold(model, full_data, features, target, False)
+
+    model = create_training_pipeline(RandomForestRegressor(n_estimators=300, min_samples_leaf=30, random_state=1))
+    model = score_model_using_KFold(model, full_data, features, target, False)
+
+    plot_partial_dependence(model, full_data, features)
 
 
 if __name__ == "__main__":
