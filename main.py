@@ -11,7 +11,7 @@ from sklearn.metrics import mean_squared_error
 # ML packages
 from sklearnex import patch_sklearn
 from sklearn.pipeline import Pipeline
-from sklearn.model_selection import train_test_split, KFold
+from sklearn.model_selection import KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.linear_model import Ridge
@@ -51,6 +51,7 @@ def plot_partial_dependence(model, full_data, features):
 
 class CustomFeatures(BaseEstimator, TransformerMixin):
     """ Transformation class to add the custom features for engineering. """
+
     def __init__(self):
         pass
 
