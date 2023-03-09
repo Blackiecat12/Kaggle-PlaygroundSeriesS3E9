@@ -68,11 +68,14 @@ def create_preprocessing_pipeline():
     return preprocessing_pipeline
 
 
-def create_training_pipeline():
-    """ Creates the full pipeline with feature engineering, preprocessing, and model. """
+def create_training_pipeline(model):
+    """ Creates the full pipeline with feature engineering, preprocessing, and model.
+     :param model: The model to train
+     :return training pipeline
+     """
     clf = Pipeline(steps=[("feature_engineering", create_feature_engineering_pipeline()),
                           ("preprocessing", create_preprocessing_pipeline()),
-                          ("model", Ridge(70))])
+                          ("model", model)])
     return clf
 
 
@@ -118,6 +121,8 @@ def main():
     tic = time.perf_counter_ns()
     model.fit(train_X, train_y)
     toc = time.perf_counter_ns()
+    model = create_training_pipeline(Ridge(70))
+    score_model_using_KFold(model, full_data, full_data.columns[1:-1], full_data.columns[-1], False)
 
     predictions = model.predict(test_X)
     print(f"Finished Training in {(toc-tic)/1e9:.2f}s with RMSE {sklearn.metrics.mean_squared_error(test_y, predictions, squared=False)}")
