@@ -111,22 +111,11 @@ def main():
     # Load and clean data
     full_data = pd.read_csv("Kaggle Data/train.csv")
     # full_data = remove_duplicate_instances(full_data)
-    full_data.drop(columns=["id"], inplace=True)
-
-    # Training and test sets
-    train_X, test_X, train_y, test_y = train_test_split(full_data.iloc[:, :-1], full_data.iloc[:, -1], train_size=.7, random_state=300)
 
     # Create the pipeline
-    model = create_training_pipeline()
-    tic = time.perf_counter_ns()
-    model.fit(train_X, train_y)
-    toc = time.perf_counter_ns()
     model = create_training_pipeline(Ridge(70))
     score_model_using_KFold(model, full_data, full_data.columns[1:-1], full_data.columns[-1], False)
 
-    predictions = model.predict(test_X)
-    print(f"Finished Training in {(toc-tic)/1e9:.2f}s with RMSE {sklearn.metrics.mean_squared_error(test_y, predictions, squared=False)}")
-    results = pd.DataFrame({"Prediction": predictions, "Actual": test_y, "Difference": predictions - test_y})
 
 if __name__ == "__main__":
     main()
