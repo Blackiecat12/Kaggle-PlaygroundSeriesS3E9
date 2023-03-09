@@ -87,6 +87,7 @@ def score_model_using_KFold(model, train, features, target, verbose: bool = True
     """
     fold_scores = []
     kf = KFold()
+    tic = time.perf_counter_ns()
     for fold_counter, (idx_train, idx_validation) in enumerate(kf.split(train)):
         X_train = train.loc[idx_train, features]
         y_train = train.loc[idx_train, target]
@@ -101,7 +102,10 @@ def score_model_using_KFold(model, train, features, target, verbose: bool = True
         if verbose:
             training_RMSE = mean_squared_error(y_train, model.predict(X_train), squared=False)
             print(f"Fold: {fold_counter}\tTraining RMSE: {training_RMSE:.2f}\tValidation RMSE: {validation_RMSE:.2f}")
-    print(f"Average RMSE: {np.mean(fold_scores)}")
+    toc = time.perf_counter_ns()
+    print(f"Model {str(model.steps[-1][-1]).split('(')[0]}\n\t"
+          f"Average RMSE: {np.mean(fold_scores)}\n\t"
+          f"Time Taken: {(toc-tic)/1.e9:.2f}s")
 
 
 def main():
