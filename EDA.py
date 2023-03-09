@@ -64,7 +64,7 @@ def analyse_feature_distributions(train: pd.DataFrame, test: pd.DataFrame, featu
     """
     # Set up the plot
     plot_width = 3
-    plot_height = math.ceil(len(features)/plot_width)
+    plot_height = math.ceil(len(features) / plot_width)
     _, axs = plt.subplots(plot_width, plot_height, figsize=(12, 10))
     ax_list = axs.ravel()
 
@@ -118,11 +118,12 @@ def add_engineered_features(df: pd.DataFrame):
     df['WaterBindingRatio'] = df['WaterComponent'] / (df['CementComponent'] + df['BlastFurnaceSlag']
                                                       + df['FlyAshComponent'])
     df['SuperPlasticizerRatio'] = df['SuperplasticizerComponent'] / (df['CementComponent'] + df['BlastFurnaceSlag']
-                                                          + df['FlyAshComponent'])
+                                                                     + df['FlyAshComponent'])
     df['CementAgeRelation'] = df['CementComponent'] * df['AgeInDays']
     df['AgeFactor2'] = df['AgeInDays'] ^ 2
     df['AgeFactor1/2'] = np.sqrt(df['AgeInDays'])
     return df
+
 
 def run_feature_selection(df: pd.DataFrame, method: str = 'RFC'):
     """ Prints the importance of the features to the predicted value via the given method. """
@@ -134,7 +135,7 @@ def run_feature_selection(df: pd.DataFrame, method: str = 'RFC'):
     importances = rf.feature_importances_
     end_time = time.perf_counter_ns()
     sorted_idx = importances.argsort()
-    print(f"Feature Importance via {method} calculated in {(end_time - start_time)/1e9:.3f}s")
+    print(f"Feature Importance via {method} calculated in {(end_time - start_time) / 1e9:.3f}s")
     print(pd.Series(importances[sorted_idx], index=X.columns[sorted_idx]).sort_values(ascending=False)[:10])
 
     corr_matrix = df.corr()
@@ -144,19 +145,7 @@ def run_feature_selection(df: pd.DataFrame, method: str = 'RFC'):
 
 def main():
     """ Main function to run the various EDA tasks. """
-    df = pd.read_csv("Kaggle Data/train.csv")
-    report_basic_info(df)
-    report_duplicated(df)
-    plot_duplicated_distributions(df)
-    # Feature engineering
-    df = add_engineered_features(df)
-
-    # Setting up sklearn with GPU
     patch_sklearn()
-
-    # Feature importance
-    run_feature_selection(df)
-    corr_matrix = df.corr()
     train_df = pd.read_csv("Kaggle Data/train.csv")
     test_df = pd.read_csv("Kaggle Data/test.csv")
     # Info
