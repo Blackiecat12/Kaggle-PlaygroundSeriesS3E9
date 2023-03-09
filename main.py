@@ -88,10 +88,10 @@ def score_model_using_KFold(model, train, features, target, verbose: bool = True
     fold_scores = []
     kf = KFold()
     for fold_counter, (idx_train, idx_validation) in enumerate(kf.split(train)):
-        X_train = train.iloc[idx_train, features]
-        y_train = train.iloc[idx_train, target]
-        X_validation = train.iloc[idx_validation, features]
-        y_validation = train.iloc[idx_validation, target]
+        X_train = train.loc[idx_train, features]
+        y_train = train.loc[idx_train, target]
+        X_validation = train.loc[idx_validation, features]
+        y_validation = train.loc[idx_validation, target]
 
         model.fit(X_train, y_train)
         validation_RMSE = mean_squared_error(y_validation, model.predict(X_validation), squared=False)
