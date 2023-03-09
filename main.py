@@ -82,8 +82,11 @@ def create_training_pipeline(model):
 def score_model_using_KFold(model, train, features, target, verbose: bool = True):
     """ Runs KFold validation on the given model.
     This code is inspired/used from https://www.kaggle.com/code/ambrosm/pss3e9-eda-which-makes-sense
+    :param model: The model to test
     :param train: The training dataset
-    :param test: The testing dataset
+    :param features: The features to train on
+    :param target: The prediction target
+    :param verbose: Output fold RMSE values
     """
     fold_scores = []
     kf = KFold()
