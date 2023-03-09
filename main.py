@@ -104,6 +104,7 @@ def score_model_using_KFold(model, train, features, target, verbose: bool = True
     :param features: The features to train on
     :param target: The prediction target
     :param verbose: Output fold RMSE values
+    :return The trained model
     """
     fold_scores = []
     kf = KFold()
@@ -125,7 +126,8 @@ def score_model_using_KFold(model, train, features, target, verbose: bool = True
     toc = time.perf_counter_ns()
     print(f"Model {str(model.steps[-1][-1]).split('(')[0]}\n\t"
           f"Average RMSE: {np.mean(fold_scores)}\n\t"
-          f"Time Taken: {(toc-tic)/1.e9:.2f}s")
+          f"Time Taken: {(toc - tic) / 1.e9:.2f}s")
+    return model
 
 
 def main():
